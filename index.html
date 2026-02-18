@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Portfolio</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Bebas Neue', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+          colors: {
+            navy: '#060614',
+            yellow: '#FFE600',
+            pink: '#FF2D78',
+            lime: '#A8FF3E',
+            cyan: '#00D4FF',
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'slide-up': 'slideUp 0.7s ease forwards',
+            'blink': 'blink 1s step-end infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-18px)' },
+            },
+            slideUp: {
+              from: { opacity: '0', transform: 'translateY(40px)' },
+              to: { opacity: '1', transform: 'translateY(0)' },
+            },
+            blink: {
+              '0%, 100%': { opacity: '1' },
+              '50%': { opacity: '0' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background-color: #060614; font-family: 'DM Sans', sans-serif; color: white; overflow-x: hidden; }
+
+    /* Noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.4;
+    }
+
+    /* Glow blobs */
+    .blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.18; pointer-events: none; }
+
+    /* Nav */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.06); }
+
+    /* Marquee */
+    .marquee-track { display: flex; gap: 2rem; animation: marquee 20s linear infinite; white-space: nowrap; }
+    @keyframes marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+
+    /* Cursor dot */
+    #cursor { width: 14px; height: 14px; background: #FFE600; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: transform 0.1s, background 0.2s; mix-blend-mode: difference; }
+
+    /* Reveal animation */
+    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Project card hover */
+    .project-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .project-card:hover { transform: translateY(-8px) rotate(-1deg); }
+
+    /* Glitch effect on hero name */
+    .glitch { position: relative; }
+    .glitch::before, .glitch::after {
+      content: attr(data-text);
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    }
+    .glitch::before { color: #FF2D78; animation: glitch1 3s infinite; clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%); }
+    .glitch::after  { color: #00D4FF; animation: glitch2 3s infinite; clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%); }
+    @keyframes glitch1 { 0%,90%,100%{transform:none} 92%{transform:translate(-4px,2px)} 95%{transform:translate(4px,-2px)} }
+    @keyframes glitch2 { 0%,90%,100%{transform:none} 92%{transform:translate(4px,-2px)} 95%{transform:translate(-4px,2px)} }
+
+    /* Form input styles */
+    .form-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 14px 18px; color: white; width: 100%; font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.3s, box-shadow 0.3s; }
+    .form-input:focus { border-color: #FFE600; box-shadow: 0 0 0 3px rgba(255,230,0,0.15); }
+    .form-input::placeholder { color: rgba(255,255,255,0.3); }
+    .form-input.error { border-color: #FF2D78; box-shadow: 0 0 0 3px rgba(255,45,120,0.15); }
+    .error-msg { color: #FF2D78; font-size: 0.78rem; margin-top: 4px; display: none; }
+    .error-msg.show { display: block; }
+
+    /* Skills badge */
+    .skill-badge { border: 1px solid rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 100px; font-size: 0.85rem; background: rgba(255,255,255,0.05); transition: all 0.2s; cursor: default; }
+    .skill-badge:hover { background: #FFE600; color: #060614; border-color: #FFE600; }
+
+    /* Section label */
+    .section-label { font-family: 'DM Sans', sans-serif; font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: #FFE600; margin-bottom: 1rem; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #060614; }
+    ::-webkit-scrollbar-thumb { background: #FFE600; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div id="cursor"></div>
+
+  <!-- ─── NAVBAR ─────────────────────────────────── -->
+  <nav class="bg-navy bg-opacity-80">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="#hero" class="font-display text-2xl text-yellow tracking-widest hover:text-pink transition-colors">PORT<span class="text-white">FOLIO</span></a>
+      <ul class="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
+        <li><a href="#about"    class="hover:text-yellow transition-colors">About</a></li>
+        <li><a href="#projects" class="hover:text-yellow transition-colors">Projects</a></li>
+        <li><a href="#contact"  class="hover:text-yellow transition-colors">Contact</a></li>
+      </ul>
+      <a href="#contact" class="hidden md:block bg-yellow text-navy font-bold text-sm px-5 py-2 rounded-full hover:bg-pink hover:text-white transition-all duration-300">Hire Me →</a>
+      <!-- Mobile menu toggle -->
+      <button id="menuBtn" class="md:hidden text-white text-2xl focus:outline-none">☰</button>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="hidden md:hidden px-6 pb-4 flex flex-col gap-4 text-sm font-medium text-white/70">
+      <a href="#about"    onclick="closeMobile()" class="hover:text-yellow">About</a>
+      <a href="#projects" onclick="closeMobile()" class="hover:text-yellow">Projects</a>
+      <a href="#contact"  onclick="closeMobile()" class="hover:text-yellow">Contact</a>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ─────────────────────────────────────── -->
+  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <!-- Glow blobs -->
+    <div class="blob w-96 h-96 bg-pink"   style="top:10%;left:-100px;"></div>
+    <div class="blob w-80 h-80 bg-yellow" style="bottom:10%;right:-60px;"></div>
+    <div class="blob w-64 h-64 bg-cyan"   style="top:50%;left:50%;transform:translate(-50%,-50%)"></div>
+
+    <!-- Floating shape -->
+    <div class="absolute top-32 right-20 w-24 h-24 border-4 border-lime rounded-full animate-float opacity-60 hidden md:block"></div>
+    <div class="absolute bottom-40 left-16 w-12 h-12 bg-pink rounded rotate-45 animate-float opacity-50 hidden md:block" style="animation-delay:2s"></div>
+
+    <div class="relative z-10 text-center px-6 max-w-5xl mx-auto">
+      <p class="section-label mb-6">✦ Fullstack Developer ✦</p>
+
+      <h1 class="font-display text-[clamp(5rem,16vw,12rem)] leading-none tracking-tight glitch" data-text="Thabiso Nene">
+        <span class="text-white">Thabiso </span><span class="text-yellow">Nene</span>
+      </h1>
+
+      <p class="mt-6 text-lg md:text-xl text-white/60 max-w-xl mx-auto leading-relaxed">
+        I build <span class="text-lime font-semibold">bold digital experiences</span> that people remember. Designer × Developer × Creator.
+      </p>
+
+      <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <a href="#projects" class="bg-yellow text-navy font-bold px-8 py-4 rounded-full text-base hover:scale-105 hover:bg-lime transition-all duration-300 shadow-lg shadow-yellow/20">
+          View My Work ↓
+        </a>
+        <a href="#contact" class="border border-white/20 text-white px-8 py-4 rounded-full text-base hover:border-pink hover:text-pink transition-all duration-300">
+          Let's Talk →
+        </a>
+      </div>
+
+      <!-- Scroll hint -->
+      <div class="mt-20 flex justify-center animate-bounce opacity-40">
+        <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── MARQUEE ────────────────────────────────── -->
+  <div class="overflow-hidden border-y border-white/10 bg-yellow/5 py-4">
+    <div class="marquee-track text-white/30 text-sm font-medium uppercase tracking-widest">
+      <span>HTML & CSS ✦</span><span>JavaScript ✦</span><span>React ✦</span><span>Tailwind CSS ✦</span>
+      <span>Node.js ✦</span><span>UI Design ✦</span><span>Figma ✦</span><span>Git ✦</span>
+      <span>HTML & CSS ✦</span><span>JavaScript ✦</span><span>React ✦</span><span>Tailwind CSS ✦</span>
+      <span>Node.js ✦</span><span>UI Design ✦</span><span>Figma ✦</span><span>Git ✦</span>
+    </div>
+  </div>
+
+  <!-- ─── ABOUT ──────────────────────────────────── -->
+  <section id="about" class="relative py-32 px-6 overflow-hidden">
+    <div class="blob w-72 h-72 bg-cyan opacity-10" style="top:0;right:0"></div>
+
+    <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+      <!-- Photo placeholder -->
+      <div class="reveal flex justify-center">
+        <div class="relative w-72 h-72 md:w-80 md:h-80">
+          <div class="absolute inset-0 bg-gradient-to-br from-pink via-yellow to-lime rounded-3xl rotate-6 opacity-60"></div>
+          <div class="absolute inset-0 bg-navy rounded-3xl flex items-center justify-center border border-white/10">
+            <div class="text-center">
+              <div class="text-6xl mb-3"></div>
+              <p class="text-white/40 text-sm"><img src="img/thabiso.jpg" alt="Thabiso Nene" class="w-full h-full object-cover rounded-3xl"/></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Text -->
+      <div class="reveal">
+        <p class="section-label">About Me</p>
+        <h2 class="font-display text-5xl md:text-6xl leading-tight mb-6">
+          CREATIVE <br/><span class="text-yellow">DEVELOPER</span><br/>& DESIGNER
+        </h2>
+        <p class="text-white/60 text-base leading-relaxed mb-6">
+          Hi! I'm <strong class="text-white">Thabiso Nene</strong> — a passionate developer who loves crafting bold, 
+          beautiful digital experiences. I blend clean code with creative design to build products 
+          that stand out in a crowded world.
+        </p>
+        <p class="text-white/60 text-base leading-relaxed mb-8">
+          When I'm not coding, I'm sketching UI concepts, exploring design trends, or contributing to 
+          open-source projects. Let's create something extraordinary together.
+        </p>
+
+        <!-- Skills -->
+        <div class="flex flex-wrap gap-2">
+          <span class="skill-badge">HTML/CSS</span>
+          <span class="skill-badge">JavaScript</span>
+          <span class="skill-badge">React</span>
+          <span class="skill-badge">Tailwind</span>
+          <span class="skill-badge">Node.js</span>
+          <span class="skill-badge">Figma</span>
+          <span class="skill-badge">Git</span>
+          <span class="skill-badge">Python</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PROJECTS ───────────────────────────────── -->
+  <section id="projects" class="relative py-32 px-6 overflow-hidden">
+    <div class="blob w-96 h-96 bg-pink opacity-10" style="bottom:0;left:-80px"></div>
+
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16 reveal">
+        <p class="section-label">My Work</p>
+        <h2 class="font-display text-5xl md:text-7xl">PROJECTS</h2>
+        <p class="text-white/50 mt-4 max-w-md mx-auto">A curated set of things I've built — from side projects to client work.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Card 1 -->
+        <div class="project-card reveal group bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden hover:border-yellow/50">
+          <div class="h-48 bg-gradient-to-br from-pink/40 to-yellow/20 flex items-center justify-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-pink to-yellow opacity-20 group-hover:opacity-40 transition-opacity"></div>
+            <span class="text-5xl z-10">🚀</span>
+          </div>
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="font-bold text-lg">Project Alpha</h3>
+              <span class="text-xs bg-yellow/10 text-yellow border border-yellow/20 px-2 py-1 rounded-full">Web App</span>
+            </div>
+            <p class="text-white/50 text-sm leading-relaxed mb-5">
+              A placeholder for your amazing project. Describe what it does, the problem it solves, and the tech stack used.
+            </p>
+            <div class="flex gap-2 flex-wrap mb-4">
+              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">React</span>
+              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">Node.js</span>
+              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">MongoDB</span>
+            </div>
+            <div class="flex gap-3">
+              <a href="#" class="text-sm text-yellow hover:text-lime transition-colors font-medium">Live Demo →</a>
+              <a href="#" class="text-sm text-white/40 hover:text-white transition-colors">GitHub</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="project-card reveal group bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden hover:border-pink/50" style="transition-delay:0.1s">
+          <div class="h-48 bg-gradient-to-br from-cyan/40 to-lime/20 flex items-center justify-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-cyan to-lime opacity-20 group-hover:opacity-40 transition-opacity"></div>
+            <span class="text-5xl z-10">🎨</span>
+          </div>
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="font-bold text-lg">Project Beta</h3>
+              <span class="text-xs bg-cyan/10 text-cyan border border-cyan/20 px-2 py-1 rounded-full">Design</span>
+            </div>
+            <p class="text-white/50 text-sm leading-relaxed mb-5">
+              Another incredible project placeholder. Replace with your actual work — a design system, UI kit, or creative tool.
+            </p>
+            <div class="flex gap-2 flex-wrap mb-4">
+              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">Figma</span>
+              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">CSS</span>
+              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">JS</span>
+            </div>
+            <div class="flex gap-3">
+              <a href="#" class="text-sm text-cyan hover:text-lime transition-colors font-medium">Live Demo →</a>
+              <a href="#" class="text-sm text-white/40 hover:text-white transition-colors">GitHub</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="project-card reveal group bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden hover:border-lime/50" style="transition-delay:0.2s">
+          <div class="h-48 bg-gradient-to-br from-lime/30 to-pink/20 flex items-center justify-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-lime to-pink opacity-20 group-hover:opacity-40 transition-opacity"></div>
+            <span class="text-5xl z-10">⚡</span>
+          </div>
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="font-bold text-lg">Project Gamma</h3>
+              <span class="text-xs bg-lime/10 text-lime border border-lime/20 px-2 py-1 rounded-full">Mobile</span>
+            </div>
+            <p class="text-white/50 text-sm leading-relaxed mb-5">
+              Your third project lives here. Show off an API integration, a mobile app, or an automation tool you're proud of.
+            </p>
+            <div class="flex gap-2 flex-wrap mb-4">
+              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">Python</span>
+              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">FastAPI</span>
+              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">React</span>
+            </div>
+            <div class="flex gap-3">
+              <a href="#" class="text-sm text-lime hover:text-yellow transition-colors font-medium">Live Demo →</a>
+              <a href="#" class="text-sm text-white/40 hover:text-white transition-colors">GitHub</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 (Coming soon placeholder) -->
+        <div class="reveal group bg-white/[0.02] border border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center min-h-64 hover:border-yellow/30 transition-colors" style="transition-delay:0.3s">
+          <div class="w-12 h-12 border-2 border-white/20 rounded-full flex items-center justify-center mb-4 group-hover:border-yellow/50 group-hover:text-yellow transition-colors">
+            <span class="text-xl">+</span>
+          </div>
+          <p class="text-white/30 text-sm group-hover:text-white/50 transition-colors">More projects coming soon</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── STATS BAR ──────────────────────────────── -->
+  <div class="border-y border-white/10 py-10 px-6">
+    <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div class="reveal">
+        <div class="font-display text-5xl text-yellow">5+</div>
+        <p class="text-white/40 text-sm mt-1">Years Coding</p>
+      </div>
+      <div class="reveal">
+        <div class="font-display text-5xl text-pink">12+</div>
+        <p class="text-white/40 text-sm mt-1">Projects Built</p>
+      </div>
+      <div class="reveal">
+        <div class="font-display text-5xl text-lime">8+</div>
+        <p class="text-white/40 text-sm mt-1">Happy Clients</p>
+      </div>
+      <div class="reveal">
+        <div class="font-display text-5xl text-cyan">∞</div>
+        <p class="text-white/40 text-sm mt-1">Cups of Coffee</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── CONTACT ────────────────────────────────── -->
+  <section id="contact" class="relative py-32 px-6 overflow-hidden">
+    <div class="blob w-96 h-96 bg-yellow opacity-10" style="top:0;right:-80px"></div>
+
+    <div class="max-w-2xl mx-auto">
+      <div class="text-center mb-12 reveal">
+        <p class="section-label">Get In Touch</p>
+        <h2 class="font-display text-5xl md:text-7xl mb-4">LET'S TALK</h2>
+        <p class="text-white/50">Got a project in mind? Want to collaborate? Drop me a message.</p>
+      </div>
+
+      <!-- Form -->
+      <form id="contactForm" class="reveal space-y-5" novalidate>
+
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm text-white/60 mb-2">Full Name *</label>
+            <input id="name" type="text" placeholder="Jane Doe" class="form-input" />
+            <p class="error-msg" id="nameErr">Please enter your name.</p>
+          </div>
+          <div>
+            <label class="block text-sm text-white/60 mb-2">Email Address *</label>
+            <input id="email" type="email" placeholder="jane@example.com" class="form-input" />
+            <p class="error-msg" id="emailErr">Please enter a valid email.</p>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm text-white/60 mb-2">Subject *</label>
+          <input id="subject" type="text" placeholder="Project Collaboration" class="form-input" />
+          <p class="error-msg" id="subjectErr">Please enter a subject.</p>
+        </div>
+
+        <div>
+          <label class="block text-sm text-white/60 mb-2">Message *</label>
+          <textarea id="message" rows="5" placeholder="Tell me about your project..." class="form-input resize-none"></textarea>
+          <p class="error-msg" id="messageErr">Please write a message (at least 20 characters).</p>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" id="submitBtn"
+          class="w-full bg-yellow text-navy font-bold py-4 rounded-xl text-base hover:bg-lime transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-yellow/20 flex items-center justify-center gap-2">
+          <span id="btnText">Send Message ✦</span>
+          <span id="btnLoader" class="hidden">Sending...</span>
+        </button>
+
+        <!-- Success message -->
+        <div id="successMsg" class="hidden text-center py-6">
+          <div class="text-4xl mb-3">🎉</div>
+          <p class="font-bold text-lime text-lg">Message sent!</p>
+          <p class="text-white/50 text-sm mt-1">I'll get back to you within 24 hours.</p>
+        </div>
+
+      </form>
+
+      <!-- Social links -->
+      <div class="reveal mt-12 flex justify-center gap-6">
+        <a href="#" class="text-white/40 hover:text-yellow transition-colors text-sm font-medium">GitHub</a>
+        <a href="#" class="text-white/40 hover:text-yellow transition-colors text-sm font-medium">LinkedIn</a>
+        <a href="#" class="text-white/40 hover:text-yellow transition-colors text-sm font-medium">Twitter</a>
+        <a href="#" class="text-white/40 hover:text-yellow transition-colors text-sm font-medium">Dribbble</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─────────────────────────────────── -->
+  <footer class="border-t border-white/10 py-8 px-6 text-center text-white/30 text-sm">
+    <p>Built with <span class="text-pink">♥</span> using HTML, Tailwind CSS & JavaScript &mdash; <span class="text-yellow">Your Name</span> © 2025</p>
+  </footer>
+
+
+  <!-- ═══════════════════════════════════════
+        JAVASCRIPT
+  ═══════════════════════════════════════ -->
+  <script>
+    // ─── Custom Cursor ─────────────────
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top  = e.clientY + 'px';
+    });
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.style.transform = 'translate(-50%,-50%) scale(2.5)'; });
+      el.addEventListener('mouseleave', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1)'; });
+    });
+
+    // ─── Mobile Menu ───────────────────
+    const menuBtn    = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    function closeMobile() { mobileMenu.classList.add('hidden'); }
+
+    // ─── Scroll Reveal ─────────────────
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ─── Contact Form Validation ───────
+    const form = document.getElementById('contactForm');
+
+    function setError(inputId, errId, show) {
+      const input = document.getElementById(inputId);
+      const err   = document.getElementById(errId);
+      if (show) {
+        input.classList.add('error');
+        err.classList.add('show');
+      } else {
+        input.classList.remove('error');
+        err.classList.remove('show');
+      }
+      return show;
+    }
+
+    function isValidEmail(val) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
+    }
+
+    function validateForm() {
+      let hasError = false;
+      const name    = document.getElementById('name').value.trim();
+      const email   = document.getElementById('email').value.trim();
+      const subject = document.getElementById('subject').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      if (setError('name',    'nameErr',    name.length < 2))       hasError = true;
+      if (setError('email',   'emailErr',   !isValidEmail(email)))  hasError = true;
+      if (setError('subject', 'subjectErr', subject.length < 3))    hasError = true;
+      if (setError('message', 'messageErr', message.length < 20))   hasError = true;
+
+      return !hasError;
+    }
+
+    // Live clear errors on input
+    ['name','email','subject','message'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        document.getElementById(id).classList.remove('error');
+        const errEl = document.getElementById(id + 'Err');
+        if (errEl) errEl.classList.remove('show');
+      });
+    });
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!validateForm()) return;
+
+      // Simulate sending
+      const btn     = document.getElementById('submitBtn');
+      const btnText = document.getElementById('btnText');
+      const loader  = document.getElementById('btnLoader');
+      const success = document.getElementById('successMsg');
+
+      btn.disabled = true;
+      btn.classList.add('opacity-70');
+      btnText.classList.add('hidden');
+      loader.classList.remove('hidden');
+
+      setTimeout(() => {
+        form.reset();
+        form.classList.add('hidden');
+        success.classList.remove('hidden');
+      }, 1800);
+    });
+
+    // ─── Active Nav Link Highlight ─────
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks  = document.querySelectorAll('nav a[href^="#"]');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 120) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.classList.toggle('text-yellow', a.getAttribute('href') === '#' + current);
+        a.classList.toggle('text-white/70', a.getAttribute('href') !== '#' + current);
+      });
+    });
+  </script>
+</body>
+</html>
