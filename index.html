@@ -145,6 +145,10 @@
     /* Skills badge */
     .skill-badge { border: 1px solid rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 100px; font-size: 0.85rem; background: rgba(255,255,255,0.05); transition: all 0.2s; cursor: default; }
     .skill-badge:hover { background: #FFE600; color: #060614; border-color: #FFE600; }
+    .skill-group { padding: 1.5rem; border: 1px solid var(--color-line); border-radius: 1rem; background: rgb(255 255 255 / 2%); }
+    .skill-group h3 { margin-bottom: 1rem; color: var(--color-accent); font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; }
+    .skill-group ul { display: flex; flex-wrap: wrap; gap: 0.5rem; list-style: none; }
+    .skill-group li { padding: 0.35rem 0.7rem; border: 1px solid var(--color-line); border-radius: 99px; color: var(--color-foreground); font-size: 0.875rem; }
 
     /* Section label */
     .section-label { font-family: var(--font-body); font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--color-accent); margin-bottom: 1rem; }
@@ -177,20 +181,26 @@
   <nav class="bg-navy bg-opacity-80" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
       <a href="#hero" class="font-display text-2xl text-yellow tracking-widest hover:text-pink transition-colors">PORT<span class="text-white">FOLIO</span></a>
-      <ul class="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
-        <li><a href="#about"    class="hover:text-yellow transition-colors">About</a></li>
+      <ul class="hidden lg:flex items-center gap-8 text-sm font-medium text-white/70">
+        <li><a href="#about" class="hover:text-yellow transition-colors">About</a></li>
+        <li><a href="#skills" class="hover:text-yellow transition-colors">Skills</a></li>
+        <li><a href="#experience" class="hover:text-yellow transition-colors">Experience</a></li>
+        <li><a href="#ventures" class="hover:text-yellow transition-colors">Ventures</a></li>
         <li><a href="#projects" class="hover:text-yellow transition-colors">Projects</a></li>
-        <li><a href="#contact"  class="hover:text-yellow transition-colors">Contact</a></li>
+        <li><a href="#contact" class="hover:text-yellow transition-colors">Contact</a></li>
       </ul>
-      <a href="#contact" class="hidden md:block bg-yellow text-navy font-bold text-sm px-5 py-2 rounded-full hover:bg-pink hover:text-white transition-all duration-300">Hire Me →</a>
+      <a href="#contact" data-magnetic class="hidden lg:block bg-yellow text-navy font-bold text-sm px-5 py-2 rounded-full hover:bg-pink hover:text-white transition-all duration-300">Hire Me →</a>
       <!-- Mobile menu toggle -->
-      <button id="menuBtn" class="md:hidden text-white text-2xl focus:outline-none">☰</button>
+      <button id="menuBtn" class="lg:hidden text-white text-2xl focus:outline-none">☰</button>
     </div>
     <!-- Mobile menu -->
-    <div id="mobileMenu" class="hidden md:hidden px-6 pb-4 flex flex-col gap-4 text-sm font-medium text-white/70">
-      <a href="#about"    onclick="closeMobile()" class="hover:text-yellow">About</a>
+    <div id="mobileMenu" class="hidden lg:hidden px-6 pb-4 flex flex-col gap-4 text-sm font-medium text-white/70">
+      <a href="#about" onclick="closeMobile()" class="hover:text-yellow">About</a>
+      <a href="#skills" onclick="closeMobile()" class="hover:text-yellow">Skills</a>
+      <a href="#experience" onclick="closeMobile()" class="hover:text-yellow">Experience</a>
+      <a href="#ventures" onclick="closeMobile()" class="hover:text-yellow">Ventures</a>
       <a href="#projects" onclick="closeMobile()" class="hover:text-yellow">Projects</a>
-      <a href="#contact"  onclick="closeMobile()" class="hover:text-yellow">Contact</a>
+      <a href="#contact" onclick="closeMobile()" class="hover:text-yellow">Contact</a>
     </div>
   </nav>
 
@@ -282,18 +292,28 @@
   open-source projects. Let's create something extraordinary together.
         </p>
 
-        <!-- Skills -->
-        <div class="flex flex-wrap gap-2">
-          <span class="skill-badge">HTML/CSS</span>
-          <span class="skill-badge">JavaScript</span>
-          <span class="skill-badge">React</span>
-          <span class="skill-badge">Tailwind</span>
-          <span class="skill-badge">Node.js</span>
-          <span class="skill-badge">Figma</span>
-          <span class="skill-badge">Git</span>
-          <span class="skill-badge">Python</span>
-        </div>
       </div>
+    </div>
+  </section>
+
+  <section id="skills" class="relative py-28 px-6 overflow-hidden" aria-labelledby="skills-title">
+    <div class="max-w-7xl mx-auto">
+      <div class="reveal mb-12">
+        <p class="section-label">The toolkit</p>
+        <h2 id="skills-title" class="font-display text-5xl md:text-7xl">SKILLS, BY DISCIPLINE</h2>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <article class="reveal skill-group"><h3>Languages & web</h3><ul><li>JavaScript</li><li>Python</li><li>Java</li><li>HTML</li><li>CSS</li></ul></article>
+        <article class="reveal skill-group"><h3>Frontend</h3><ul><li>React</li><li>Tailwind</li></ul></article>
+        <article class="reveal skill-group"><h3>Backend</h3><ul><li>Node.js</li><li>Express</li><li>Django</li></ul></article>
+        <article class="reveal skill-group"><h3>Data & storage</h3><ul><li>MySQL</li><li>PostgreSQL</li><li>SQLite</li><li>Power BI</li><li>Excel</li></ul></article>
+        <article class="reveal skill-group"><h3>Visual design</h3><ul><li>Figma</li><li>Photoshop</li><li>Illustrator</li></ul></article>
+        <article class="reveal skill-group"><h3>Workflow</h3><ul><li>Git</li><li>Postman</li></ul></article>
+      </div>
+      <p class="reveal mt-8 text-sm text-white/50">TODO — new skills for Thabiso to confirm</p>
+      <ul id="skillsTodo" class="mt-2 flex flex-wrap gap-2" aria-label="Skills to confirm">
+        <li class="text-sm text-white/40">Awaiting confirmed additions.</li>
+      </ul>
     </div>
   </section>
 
@@ -541,6 +561,17 @@
         JAVASCRIPT
   ═══════════════════════════════════════ -->
   <script>
+  // TODO: Add only skills Thabiso confirms.
+  const TODO = [];
+  const skillsTodo = document.getElementById('skillsTodo');
+  if (TODO.length) {
+    skillsTodo.replaceChildren(...TODO.map(skill => {
+      const item = document.createElement('li');
+      item.textContent = skill;
+      return item;
+    }));
+  }
+
   // ─── Custom Cursor ─────────────────
   const cursor = document.getElementById('cursor');
   // ─── Mobile Menu ───────────────────
