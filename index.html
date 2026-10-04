@@ -3,7 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Thabiso Nene - Website</title>
+  <meta name="description" content="Thabiso Nene is a Full Stack Developer, Founder and Graphic Designer in Durban, South Africa. Explore selected projects, experience and ventures." />
+  <meta name="author" content="Thabiso Nene" />
+  <meta name="theme-color" content="#08090b" />
+  <link rel="canonical" href="https://thabisonene.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="en_ZA" />
+  <meta property="og:site_name" content="Thabiso Nene" />
+  <meta property="og:title" content="Thabiso Nene — Developer, Founder &amp; Designer" />
+  <meta property="og:description" content="Full Stack Developer, Founder and Graphic Designer based in Durban, South Africa." />
+  <meta property="og:url" content="https://thabisonene.com/" />
+  <meta property="og:image" content="https://thabisonene.com/img/thabiso-960.webp" />
+  <meta property="og:image:alt" content="Portrait of Thabiso Nene" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Thabiso Nene — Developer, Founder &amp; Designer" />
+  <meta name="twitter:description" content="Full Stack Developer, Founder and Graphic Designer based in Durban, South Africa." />
+  <meta name="twitter:image" content="https://thabisonene.com/img/thabiso-960.webp" />
+  <title>Thabiso Nene — Full Stack Developer, Founder &amp; Designer</title>
 
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -139,15 +155,15 @@
 
     /* Form input styles */
     .form-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 14px 18px; color: white; width: 100%; font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.3s, box-shadow 0.3s; }
-    .form-input:focus { border-color: #FFE600; box-shadow: 0 0 0 3px rgba(255,230,0,0.15); }
+    .form-input:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px rgb(227 182 107 / 15%); }
     .form-input::placeholder { color: rgba(255,255,255,0.3); }
-    .form-input.error { border-color: #FF2D78; box-shadow: 0 0 0 3px rgba(255,45,120,0.15); }
-    .error-msg { color: #FF2D78; font-size: 0.78rem; margin-top: 4px; display: none; }
+    .form-input.error { border-color: var(--color-accent); box-shadow: 0 0 0 3px rgb(227 182 107 / 15%); }
+    .error-msg { color: var(--color-accent); font-size: 0.78rem; margin-top: 4px; display: none; }
     .error-msg.show { display: block; }
 
     /* Skills badge */
     .skill-badge { border: 1px solid rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 100px; font-size: 0.85rem; background: rgba(255,255,255,0.05); transition: all 0.2s; cursor: default; }
-    .skill-badge:hover { background: #FFE600; color: #060614; border-color: #FFE600; }
+    .skill-badge:hover { background: var(--color-accent); color: var(--color-background); border-color: var(--color-accent); }
     .skill-group { padding: 1.5rem; border: 1px solid var(--color-line); border-radius: 1rem; background: rgb(255 255 255 / 2%); }
     .skill-group h3 { margin-bottom: 1rem; color: var(--color-accent); font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; }
     .skill-group ul { display: flex; flex-wrap: wrap; gap: 0.5rem; list-style: none; }
@@ -168,8 +184,8 @@
 
     /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #060614; }
-    ::-webkit-scrollbar-thumb { background: #FFE600; border-radius: 3px; }
+    ::-webkit-scrollbar-track { background: var(--color-background); }
+    ::-webkit-scrollbar-thumb { background: var(--color-accent); border-radius: 3px; }
 
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -660,7 +676,9 @@
   // ─── Active Nav Link Highlight ─────
   const sections = document.querySelectorAll('section[id]');
   const navLinks  = document.querySelectorAll('nav a[href^="#"]');
-  window.addEventListener('scroll', () => {
+  let navFrame = 0;
+  function updateActiveNav() {
+    navFrame = 0;
     let current = '';
     sections.forEach(s => {
       if (window.scrollY >= s.offsetTop - 120) current = s.id;
@@ -669,7 +687,11 @@
       a.classList.toggle('text-yellow', a.getAttribute('href') === '#' + current);
       a.classList.toggle('text-white/70', a.getAttribute('href') !== '#' + current);
     });
-  });
+  }
+  window.addEventListener('scroll', () => {
+    if (!navFrame) navFrame = window.requestAnimationFrame(updateActiveNav);
+  }, { passive: true });
+  updateActiveNav();
   </script>
   <script type="module" src="./src/effects.js"></script>
 </body>
