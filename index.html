@@ -113,6 +113,7 @@
 
     .skip-link { position: fixed; top: 1rem; left: 1rem; z-index: 1000; padding: 0.75rem 1rem; background: var(--color-accent); color: var(--color-background); transform: translateY(-160%); transition: transform 0.2s ease; }
     .skip-link:focus { transform: translateY(0); }
+    :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
 
     /* Content remains visible until motion is explicitly enabled. */
     .reveal { opacity: 1; transform: none; transition: opacity 0.8s var(--ease-cinematic), transform 0.8s var(--ease-cinematic); }
@@ -203,7 +204,7 @@
       </ul>
       <a href="#contact" data-magnetic class="hidden lg:block bg-yellow text-navy font-bold text-sm px-5 py-2 rounded-full hover:bg-pink hover:text-white transition-all duration-300">Hire Me →</a>
       <!-- Mobile menu toggle -->
-      <button id="menuBtn" class="lg:hidden text-white text-2xl focus:outline-none">☰</button>
+      <button id="menuBtn" type="button" aria-controls="mobileMenu" aria-expanded="false" aria-label="Open navigation menu" class="lg:hidden text-white text-2xl">☰</button>
     </div>
     <!-- Mobile menu -->
     <div id="mobileMenu" class="hidden lg:hidden px-6 pb-4 flex flex-col gap-4 text-sm font-medium text-white/70">
@@ -251,7 +252,7 @@
 
       <!-- Scroll hint -->
       <div class="mt-20 flex justify-center animate-bounce opacity-40">
-        <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        <svg aria-hidden="true" width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
       </div>
     </div>
   </section>
@@ -453,27 +454,27 @@
 
         <div class="grid sm:grid-cols-2 gap-5">
           <div>
-            <label class="block text-sm text-white/60 mb-2">Your Full Name *</label>
-            <input id="name" type="text" placeholder="Thabiso Nene" class="form-input" />
-            <p class="error-msg" id="nameErr">Please enter your name.</p>
+            <label for="name" class="block text-sm text-white/60 mb-2">Your Full Name *</label>
+            <input id="name" name="name" type="text" autocomplete="name" placeholder="Thabiso Nene" class="form-input" aria-describedby="nameErr" required />
+            <p class="error-msg" id="nameErr" role="alert">Please enter your name.</p>
           </div>
           <div>
-            <label class="block text-sm text-white/60 mb-2">Your Email Address *</label>
-            <input id="email" type="email" placeholder="thabisonene@example.com" class="form-input" />
-            <p class="error-msg" id="emailErr">Please enter a valid email.</p>
+            <label for="email" class="block text-sm text-white/60 mb-2">Your Email Address *</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="thabisonene@example.com" class="form-input" aria-describedby="emailErr" required />
+            <p class="error-msg" id="emailErr" role="alert">Please enter a valid email.</p>
           </div>
         </div>
 
         <div>
-          <label class="block text-sm text-white/60 mb-2">Subject *</label>
-          <input id="subject" type="text" placeholder="Project Collaboration" class="form-input" />
-          <p class="error-msg" id="subjectErr">Please enter a subject.</p>
+          <label for="subject" class="block text-sm text-white/60 mb-2">Subject *</label>
+          <input id="subject" name="subject" type="text" placeholder="Project Collaboration" class="form-input" aria-describedby="subjectErr" required />
+          <p class="error-msg" id="subjectErr" role="alert">Please enter a subject.</p>
         </div>
 
         <div>
-          <label class="block text-sm text-white/60 mb-2">Message *</label>
-          <textarea id="message" rows="5" placeholder="Tell me about your project..." class="form-input resize-none"></textarea>
-          <p class="error-msg" id="messageErr">Please write a message (at least 20 characters).</p>
+          <label for="message" class="block text-sm text-white/60 mb-2">Message *</label>
+          <textarea id="message" name="message" rows="5" placeholder="Tell me about your project..." class="form-input resize-none" aria-describedby="messageErr" required></textarea>
+          <p class="error-msg" id="messageErr" role="alert">Please write a message (at least 20 characters).</p>
         </div>
 
         <!-- Submit -->
@@ -484,10 +485,10 @@
         </button>
 
         <!-- Success message -->
-        <div id="successMsg" class="hidden text-center py-6">
+        <div id="successMsg" class="hidden text-center py-6" role="status" aria-live="polite">
           <div class="text-4xl mb-3"></div>
-          <p class="font-bold text-lime text-lg">Message sent!</p>
-          <p class="text-white/50 text-sm mt-1">I'll get back to you within 24 hours.</p>
+          <p class="font-bold text-lime text-lg">Your email draft is ready</p>
+          <p class="text-white/50 text-sm mt-1">Send the message from your email app to get in touch.</p>
         </div>
 
       </form>
@@ -524,12 +525,26 @@
   }
 
   // ─── Custom Cursor ─────────────────
-  const cursor = document.getElementById('cursor');
   // ─── Mobile Menu ───────────────────
   const menuBtn    = document.getElementById('menuBtn');
   const mobileMenu = document.getElementById('mobileMenu');
-  menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-  function closeMobile() { mobileMenu.classList.add('hidden'); }
+  menuBtn.addEventListener('click', () => {
+    const isOpen = menuBtn.getAttribute('aria-expanded') === 'true';
+    menuBtn.setAttribute('aria-expanded', String(!isOpen));
+    menuBtn.setAttribute('aria-label', isOpen ? 'Open navigation menu' : 'Close navigation menu');
+    mobileMenu.classList.toggle('hidden', isOpen);
+  });
+  function closeMobile() {
+    mobileMenu.classList.add('hidden');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    menuBtn.setAttribute('aria-label', 'Open navigation menu');
+  }
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && menuBtn.getAttribute('aria-expanded') === 'true') {
+      closeMobile();
+      menuBtn.focus();
+    }
+  });
 
   // ─── Scroll Reveal ─────────────────
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -563,9 +578,11 @@
     const err   = document.getElementById(errId);
     if (show) {
       input.classList.add('error');
+      input.setAttribute('aria-invalid', 'true');
       err.classList.add('show');
     } else {
       input.classList.remove('error');
+      input.removeAttribute('aria-invalid');
       err.classList.remove('show');
     }
     return show;
@@ -594,6 +611,7 @@
   ['name','email','subject','message'].forEach(id => {
     document.getElementById(id).addEventListener('input', () => {
       document.getElementById(id).classList.remove('error');
+      document.getElementById(id).removeAttribute('aria-invalid');
       const errEl = document.getElementById(id + 'Err');
       if (errEl) errEl.classList.remove('show');
     });
