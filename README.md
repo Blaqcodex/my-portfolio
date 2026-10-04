@@ -20,6 +20,8 @@ Open [http://localhost:8000](http://localhost:8000). Stop the server with `Ctrl+
 - `img/thabiso.jpg` is the JPEG portrait fallback. `img/thabiso-640.webp` and `img/thabiso-960.webp` are responsive WebP sources.
 - `CNAME` configures the custom GitHub Pages domain.
 
+The visual system uses a near-black surface, warm amber as its single accent, and decorative grain and vignette overlays.
+
 ## Motion and physics
 
 The spring solver uses stiffness `190` and damping `25` for a quick, restrained settle. Each frame is capped at `1/30` second so a suspended tab cannot cause a large simulation step. Magnetic elements use a softer stiffness of `150` and damping of `22`; tilt uses `120` and `20`, with rotation limited to four degrees.
