@@ -88,6 +88,19 @@
     /* Nav */
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.06); }
 
+    .intro-overlay { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; background: var(--color-background); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.7s var(--ease-cinematic), visibility 0.7s; }
+    .intro-enabled .intro-overlay { opacity: 1; visibility: visible; }
+    .intro-overlay.is-complete { opacity: 0; visibility: hidden; }
+    .intro-name { overflow: hidden; color: var(--color-foreground); font: clamp(2.5rem, 10vw, 7rem)/0.9 var(--font-display); letter-spacing: -0.02em; }
+    .intro-name span { display: block; transform: translateY(110%); animation: intro-name-in 0.9s var(--ease-cinematic) 0.12s forwards; }
+    @keyframes intro-name-in { to { transform: translateY(0); } }
+    .hero-copy { opacity: 0; transform: translateY(1.5rem); }
+    .hero-ready .hero-copy { animation: hero-copy-in 0.9s var(--ease-cinematic) forwards; }
+    .hero-ready .hero-copy:nth-child(2) { animation-delay: 0.12s; }
+    .hero-ready .hero-copy:nth-child(3) { animation-delay: 0.24s; }
+    .hero-ready .hero-copy:nth-child(4) { animation-delay: 0.36s; }
+    @keyframes hero-copy-in { to { opacity: 1; transform: translateY(0); } }
+
     /* Marquee */
     .marquee-track { display: flex; gap: 2rem; animation: marquee 20s linear infinite; white-space: nowrap; }
     @keyframes marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
@@ -142,10 +155,15 @@
       html { scroll-behavior: auto; }
       *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
       .reveal { opacity: 1 !important; transform: none !important; }
+      .intro-overlay { display: none; }
+      .hero-copy { opacity: 1; transform: none; }
     }
   </style>
 </head>
 <body>
+  <div class="intro-overlay" id="introOverlay" aria-hidden="true">
+    <p class="intro-name"><span>Thabiso Nene</span></p>
+  </div>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- Custom cursor -->
@@ -185,17 +203,17 @@
     <div class="absolute bottom-40 left-16 w-12 h-12 bg-pink rounded rotate-45 animate-float opacity-50 hidden md:block" style="animation-delay:2s"></div>
 
     <div class="relative z-10 text-center px-6 max-w-5xl mx-auto">
-      <p class="section-label mb-6">✦ Fullstack Developer ✦</p>
+      <p class="section-label mb-6 hero-copy">✦ Full Stack Developer ✦</p>
 
-      <h1 id="hero-title" class="font-display text-[clamp(5rem,16vw,12rem)] leading-none tracking-tight glitch" data-text="Thabiso Nene">
+      <h1 id="hero-title" class="font-display text-[clamp(5rem,16vw,12rem)] leading-none tracking-tight glitch hero-copy" data-text="Thabiso Nene">
         <span class="text-white">Thabiso </span><span class="text-yellow">Nene</span>
       </h1>
 
-      <p class="mt-6 text-lg md:text-xl text-white/60 max-w-xl mx-auto leading-relaxed">
+      <p class="mt-6 text-lg md:text-xl text-white/60 max-w-xl mx-auto leading-relaxed hero-copy">
         I build <span class="text-lime font-semibold">bold digital experiences</span> that people remember. Designer × Developer × Creator.
       </p>
 
-      <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center hero-copy">
         <a href="#projects" class="bg-yellow text-navy font-bold px-8 py-4 rounded-full text-base hover:scale-105 hover:bg-lime transition-all duration-300 shadow-lg shadow-yellow/20">
           View My Work ↓
         </a>
@@ -548,6 +566,13 @@
   if (!reducedMotion) {
     document.body.classList.add('motion-ready');
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    const intro = document.getElementById('introOverlay');
+    document.documentElement.classList.add('intro-enabled');
+    window.setTimeout(() => {
+      intro.classList.add('is-complete');
+      document.documentElement.classList.remove('intro-enabled');
+      document.body.classList.add('hero-ready');
+    }, 1250);
   } else {
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
   }
