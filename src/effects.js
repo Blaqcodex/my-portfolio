@@ -51,6 +51,7 @@ if (!reducedMotion && finePointer) {
     unsettled ||= cursorX.velocity !== 0 || cursorY.velocity !== 0 || cursorScale.velocity !== 0;
 
     magnets.forEach(magnet => {
+      // Softer than the cursor spring so magnetic controls travel only a little.
       const xOffset = stepSpring(magnet.x, magnet.targetX, delta, 150, 22);
       const yOffset = stepSpring(magnet.y, magnet.targetY, delta, 150, 22);
       magnet.element.style.setProperty('--magnetic-x', `${xOffset.toFixed(2)}px`);
@@ -59,6 +60,7 @@ if (!reducedMotion && finePointer) {
     });
 
     cards.forEach(card => {
+      // A slower, low-amplitude spring makes cards settle without pronounced wobble.
       const rotateX = stepSpring(card.x, card.targetX, delta, 120, 20);
       const rotateY = stepSpring(card.y, card.targetY, delta, 120, 20);
       card.element.style.setProperty('--tilt-x', `${rotateX.toFixed(2)}deg`);
@@ -80,6 +82,7 @@ if (!reducedMotion && finePointer) {
       const bounds = magnet.element.getBoundingClientRect();
       const inside = pointerX >= bounds.left - 24 && pointerX <= bounds.right + 24
         && pointerY >= bounds.top - 24 && pointerY <= bounds.bottom + 24;
+      // Restrict magnetic travel to a small fraction of pointer displacement.
       magnet.targetX = inside ? (pointerX - (bounds.left + bounds.width / 2)) * 0.14 : 0;
       magnet.targetY = inside ? (pointerY - (bounds.top + bounds.height / 2)) * 0.14 : 0;
     });
@@ -88,6 +91,7 @@ if (!reducedMotion && finePointer) {
       const bounds = card.element.getBoundingClientRect();
       card.active = pointerX >= bounds.left && pointerX <= bounds.right
         && pointerY >= bounds.top && pointerY <= bounds.bottom;
+      // Four degrees is enough depth to notice without making reading uncomfortable.
       card.targetX = card.active ? ((bounds.top + bounds.height / 2 - pointerY) / bounds.height) * 4 : 0;
       card.targetY = card.active ? ((pointerX - bounds.left - bounds.width / 2) / bounds.width) * 4 : 0;
       if (card.active) card.element.classList.add('is-tilting');
@@ -118,8 +122,10 @@ if (!reducedMotion) {
   const context = canvas.getContext('2d');
   const hero = canvas.closest('#hero');
   const particles = [];
+  // Keep the visual field lightweight on touch and high-density screens.
   const count = finePointer ? 28 : 12;
   const pointer = { x: -1000, y: -1000 };
+  // The DPR cap controls fill cost on retina displays while keeping dots crisp.
   const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
   let width = 0;
   let height = 0;
@@ -159,10 +165,12 @@ if (!reducedMotion) {
       const dy = particle.y - pointer.y;
       const distance = Math.hypot(dx, dy);
       if (distance < 150 && distance > 0) {
+        // A short-range, weak repulsion gives the pointer a little physical presence.
         const force = ((150 - distance) / 150) * 42;
         particle.vx += (dx / distance) * force * delta;
         particle.vy += (dy / distance) * force * delta;
       }
+      // Per-frame damping lets particles settle quickly after the pointer passes.
       particle.vx *= 0.985;
       particle.vy *= 0.985;
       particle.x += particle.vx;
@@ -205,4 +213,40 @@ if (!reducedMotion) {
   document.addEventListener('visibilitychange', start);
   window.addEventListener('resize', resize, { passive: true });
   resize();
+}
+
+if (!reducedMotion) {
+  const layers = [...document.querySelectorAll('[data-parallax]')].map(element => ({
+    element,
+    section: element.closest('section'),
+    speed: Number(element.dataset.parallax),
+    visible: false
+  }));
+  let frame = 0;
+
+  function updateParallax() {
+    frame = 0;
+    layers.forEach(layer => {
+      if (!layer.visible) return;
+      const offset = (window.scrollY - layer.section.offsetTop) * layer.speed;
+      layer.element.style.setProperty('--parallax-y', `${offset.toFixed(1)}px`);
+    });
+  }
+
+  function scheduleParallax() {
+    if (!frame && !document.hidden) frame = window.requestAnimationFrame(updateParallax);
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const layer = layers.find(item => item.element === entry.target);
+      layer.visible = entry.isIntersecting;
+      if (!layer.visible) layer.element.style.setProperty('--parallax-y', '0px');
+    });
+    scheduleParallax();
+  });
+
+  layers.forEach(layer => observer.observe(layer.element));
+  window.addEventListener('scroll', scheduleParallax, { passive: true });
+  document.addEventListener('visibilitychange', scheduleParallax);
 }
