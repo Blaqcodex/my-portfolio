@@ -112,3 +112,97 @@ if (!reducedMotion && finePointer) {
     requestFrame();
   });
 }
+
+if (!reducedMotion) {
+  const canvas = document.getElementById('heroParticles');
+  const context = canvas.getContext('2d');
+  const hero = canvas.closest('#hero');
+  const particles = [];
+  const count = finePointer ? 28 : 12;
+  const pointer = { x: -1000, y: -1000 };
+  const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+  let width = 0;
+  let height = 0;
+  let visible = false;
+  let frame = 0;
+  let previousTime = 0;
+
+  function resize() {
+    const bounds = hero.getBoundingClientRect();
+    width = bounds.width;
+    height = bounds.height;
+    canvas.width = Math.round(width * pixelRatio);
+    canvas.height = Math.round(height * pixelRatio);
+    context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+
+    while (particles.length < count) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: 0,
+        vy: 0,
+        radius: Math.random() * 1.2 + 0.6
+      });
+    }
+    particles.length = count;
+  }
+
+  function animate(time) {
+    frame = 0;
+    if (!visible || document.hidden) return;
+    const delta = previousTime ? Math.min((time - previousTime) / 1000, 1 / 30) : 1 / 60;
+    previousTime = time;
+    context.clearRect(0, 0, width, height);
+
+    particles.forEach(particle => {
+      const dx = particle.x - pointer.x;
+      const dy = particle.y - pointer.y;
+      const distance = Math.hypot(dx, dy);
+      if (distance < 150 && distance > 0) {
+        const force = ((150 - distance) / 150) * 42;
+        particle.vx += (dx / distance) * force * delta;
+        particle.vy += (dy / distance) * force * delta;
+      }
+      particle.vx *= 0.985;
+      particle.vy *= 0.985;
+      particle.x += particle.vx;
+      particle.y += particle.vy;
+      particle.x = (particle.x + width) % width;
+      particle.y = (particle.y + height) % height;
+
+      context.beginPath();
+      context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+      context.fillStyle = 'rgba(227, 182, 107, 0.34)';
+      context.fill();
+    });
+
+    frame = window.requestAnimationFrame(animate);
+  }
+
+  function start() {
+    if (visible && !document.hidden && !frame) frame = window.requestAnimationFrame(animate);
+  }
+
+  new IntersectionObserver(entries => {
+    visible = entries[0].isIntersecting;
+    if (visible) start();
+    else {
+      window.cancelAnimationFrame(frame);
+      frame = 0;
+      previousTime = 0;
+    }
+  }).observe(hero);
+
+  hero.addEventListener('pointermove', event => {
+    const bounds = canvas.getBoundingClientRect();
+    pointer.x = event.clientX - bounds.left;
+    pointer.y = event.clientY - bounds.top;
+  }, { passive: true });
+  hero.addEventListener('pointerleave', () => {
+    pointer.x = -1000;
+    pointer.y = -1000;
+  }, { passive: true });
+  document.addEventListener('visibilitychange', start);
+  window.addEventListener('resize', resize, { passive: true });
+  resize();
+}
