@@ -71,7 +71,7 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     body { background-color: var(--color-background); font-family: var(--font-body); color: var(--color-foreground); overflow-x: hidden; }
 
     /* Noise texture overlay */
@@ -95,8 +95,12 @@
     /* Cursor dot */
     #cursor { width: 14px; height: 14px; background: #FFE600; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: transform 0.1s, background 0.2s; mix-blend-mode: difference; }
 
-    /* Reveal animation */
-    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .skip-link { position: fixed; top: 1rem; left: 1rem; z-index: 1000; padding: 0.75rem 1rem; background: var(--color-accent); color: var(--color-background); transform: translateY(-160%); transition: transform 0.2s ease; }
+    .skip-link:focus { transform: translateY(0); }
+
+    /* Content remains visible until motion is explicitly enabled. */
+    .reveal { opacity: 1; transform: none; transition: opacity 0.8s var(--ease-cinematic), transform 0.8s var(--ease-cinematic); }
+    .motion-ready .reveal:not(.visible) { opacity: 0; transform: translateY(2rem); }
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
     /* Project card hover */
@@ -133,15 +137,22 @@
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #060614; }
     ::-webkit-scrollbar-thumb { background: #FFE600; border-radius: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+      .reveal { opacity: 1 !important; transform: none !important; }
+    }
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- Custom cursor -->
-  <div id="cursor"></div>
+  <div id="cursor" aria-hidden="true"></div>
 
   <!-- ─── NAVBAR ─────────────────────────────────── -->
-  <nav class="bg-navy bg-opacity-80">
+  <nav class="bg-navy bg-opacity-80" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
       <a href="#hero" class="font-display text-2xl text-yellow tracking-widest hover:text-pink transition-colors">PORT<span class="text-white">FOLIO</span></a>
       <ul class="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
@@ -162,7 +173,8 @@
   </nav>
 
   <!-- ─── HERO ─────────────────────────────────────── -->
-  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+  <main id="main">
+  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20" aria-labelledby="hero-title">
     <!-- Glow blobs -->
     <div class="blob w-96 h-96 bg-pink"   style="top:10%;left:-100px;"></div>
     <div class="blob w-80 h-80 bg-yellow" style="bottom:10%;right:-60px;"></div>
@@ -175,7 +187,7 @@
     <div class="relative z-10 text-center px-6 max-w-5xl mx-auto">
       <p class="section-label mb-6">✦ Fullstack Developer ✦</p>
 
-      <h1 class="font-display text-[clamp(5rem,16vw,12rem)] leading-none tracking-tight glitch" data-text="Thabiso Nene">
+      <h1 id="hero-title" class="font-display text-[clamp(5rem,16vw,12rem)] leading-none tracking-tight glitch" data-text="Thabiso Nene">
         <span class="text-white">Thabiso </span><span class="text-yellow">Nene</span>
       </h1>
 
@@ -494,6 +506,7 @@
       </div>
     </div>
   </section>
+  </main>
 
   <!-- ─── FOOTER ─────────────────────────────────── -->
   <footer class="border-t border-white/10 py-8 px-6 text-center text-white/30 text-sm">
@@ -523,12 +536,21 @@
   function closeMobile() { mobileMenu.classList.add('hidden'); }
 
   // ─── Scroll Reveal ─────────────────
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
     });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  if (!reducedMotion) {
+    document.body.classList.add('motion-ready');
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  }
 
   // ─── Contact Form Validation ───────
   const form = document.getElementById('contactForm');
