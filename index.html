@@ -157,6 +157,10 @@
     .experience-card ul { margin-top: 1rem; padding-left: 1.25rem; color: var(--color-muted); line-height: 1.8; }
     .experience-date, .venture-index { color: var(--color-accent); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
     .education-note { padding: 1.5rem; border-left: 2px solid var(--color-accent); background: rgb(255 255 255 / 2%); }
+    .project-art { position: relative; display: flex; min-height: 13rem; flex-direction: column; justify-content: space-between; overflow: hidden; padding: 1.5rem; color: var(--color-accent); background: radial-gradient(ellipse at 80% 20%, rgb(227 182 107 / 14%), transparent 45%), var(--color-surface); }
+    .project-art::after { position: absolute; right: -2rem; bottom: -5rem; width: 13rem; height: 13rem; border: 1px solid rgb(227 182 107 / 30%); border-radius: 50%; content: ''; }
+    .project-art > span { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; }
+    .project-art > strong { z-index: 1; align-self: flex-end; font: 7rem/0.7 var(--font-display); opacity: 0.75; }
 
     /* Section label */
     .section-label { font-family: var(--font-body); font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--color-accent); margin-bottom: 1rem; }
@@ -400,123 +404,38 @@
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-16 reveal">
         <p class="section-label">My Work</p>
-        <h2 class="font-display text-5xl md:text-7xl">PROJECTS</h2>
-        <p class="text-white/50 mt-4 max-w-md mx-auto">A curated set of things I've built, from side projects to client work.</p>
+        <h2 class="font-display text-5xl md:text-7xl">SELECTED WORK</h2>
+        <p class="text-white/50 mt-4 max-w-md mx-auto">Three directions in the same practice: useful systems, community and the web as a canvas.</p>
       </div>
 
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-        <!-- Card 1 -->
-        <div data-tilt class="project-card reveal group bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden hover:border-yellow/50">
-          <div class="h-48 bg-gradient-to-br from-pink/40 to-yellow/20 flex items-center justify-center relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-br from-pink to-yellow opacity-20 group-hover:opacity-40 transition-opacity"></div>
-            <span class="text-5xl z-10"></span>
-          </div>
+        <article data-tilt class="project-card reveal group overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+          <div class="project-art"><span>01 / SYSTEMS</span><strong>01</strong></div>
           <div class="p-6">
-            <div class="flex items-start justify-between mb-3">
-              <h3 class="font-bold text-lg">Field2Market</h3>
-              <span class="text-xs bg-yellow/10 text-yellow border border-yellow/20 px-2 py-1 rounded-full">Web App</span>
-            </div>
-            <p class="text-white/50 text-sm leading-relaxed mb-5">
-              Field2Market is a community-focused web platform that connects local farmers directly with buyers by allowing farmers to post their produce and customers to browse available items online.
-            </p>
-            <div class="flex gap-2 flex-wrap mb-4">
-              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">HTML</span>
-              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">JavaScript</span>
-              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">Tailwind / CSS</span>
-            </div>
-            <div class="flex gap-3">
-              <a href="#" class="text-sm text-yellow hover:text-lime transition-colors font-medium">Live Demo →</a>
-              <a href="https://github.com/Blaqcodex/field2market" class="text-sm text-white/40 hover:text-white transition-colors">GitHub</a>
-            </div>
+            <p class="section-label">Full stack</p>
+            <h3 class="mb-3 text-xl font-bold">User Management System</h3>
+            <p class="text-sm leading-relaxed text-white/60">A full-stack system for managing users, connecting the application experience to its data layer.</p>
           </div>
-        </div>
-
-        <!-- Card 2 -->
-        <div data-tilt class="project-card reveal group bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden hover:border-pink/50" style="transition-delay:0.1s">
-          <div class="h-48 bg-gradient-to-br from-cyan/40 to-lime/20 flex items-center justify-center relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-br from-cyan to-lime opacity-20 group-hover:opacity-40 transition-opacity"></div>
-            <span class="text-5xl z-10"></span>
-          </div>
+        </article>
+        <article data-tilt class="project-card reveal group overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+          <div class="project-art"><span>02 / COMMUNITY</span><strong>02</strong></div>
           <div class="p-6">
-            <div class="flex items-start justify-between mb-3">
-              <h3 class="font-bold text-lg">Codexory</h3>
-              <span class="text-xs bg-cyan/10 text-cyan border border-cyan/20 px-2 py-1 rounded-full">Design</span>
-            </div>
-            <p class="text-white/50 text-sm leading-relaxed mb-5">
-              A responsive web page built with HTML, CSS (using Tailwind CSS), and vanilla JavaScript, showcasing an e-commerce landing page design with interactive elements and smooth animations.
-            </p>
-            <div class="flex gap-2 flex-wrap mb-4">
-              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">Figma</span>
-              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">CSS</span>
-              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">JS</span>
-            </div>
-            <div class="flex gap-3">
-              <a href="#" class="text-sm text-cyan hover:text-lime transition-colors font-medium">Live Demo →</a>
-              <a href="https://github.com/Blaqcodex/my-e-commerce-site" class="text-sm text-white/40 hover:text-white transition-colors">GitHub</a>
-            </div>
+            <p class="section-label">Web experience</p>
+            <h3 class="mb-3 text-xl font-bold">Community Farming Website</h3>
+            <p class="text-sm leading-relaxed text-white/60">A website centered on community farming, bringing a community-led idea into a digital space.</p>
           </div>
-        </div>
-
-        <!-- Card 3 -->
-        <div data-tilt class="project-card reveal group bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden hover:border-lime/50" style="transition-delay:0.2s">
-          <div class="h-48 bg-gradient-to-br from-lime/30 to-pink/20 flex items-center justify-center relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-br from-lime to-pink opacity-20 group-hover:opacity-40 transition-opacity"></div>
-            <span class="text-5xl z-10"></span>
-          </div>
+        </article>
+        <article data-tilt class="project-card reveal group overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+          <div class="project-art"><span>03 / INTERFACES</span><strong>03</strong></div>
           <div class="p-6">
-            <div class="flex items-start justify-between mb-3">
-              <h3 class="font-bold text-lg">Basic REST API</h3>
-              <span class="text-xs bg-lime/10 text-lime border border-lime/20 px-2 py-1 rounded-full">API</span>
-            </div>
-            <p class="text-white/50 text-sm leading-relaxed mb-5">
-              A Node.js & Express REST API that implements CRUD operations for a "User" entity (name, email, age). The API is built to demonstrate Node.js basics, REST API design, and JSON handling, with functionality tested using Postman.
-            </p>
-            <div class="flex gap-2 flex-wrap mb-4">
-              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">Node.js</span>
-              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">Express</span>
-              <span class="text-xs text-white/40 border border-white/10 px-2 py-1 rounded">JavaScript</span>
-            </div>
-            <div class="flex gap-3">
-              <a href="#" class="text-sm text-lime hover:text-yellow transition-colors font-medium">Live Demo →</a>
-              <a href="https://github.com/Blaqcodex/user-api" class="text-sm text-white/40 hover:text-white transition-colors">GitHub</a>
-            </div>
+            <p class="section-label">Responsive design</p>
+            <h3 class="mb-3 text-xl font-bold">Portfolios &amp; Landing Pages</h3>
+            <p class="text-sm leading-relaxed text-white/60">Responsive portfolio and landing-page work shaped around clear hierarchy and adaptable layouts.</p>
           </div>
-        </div>
-
-        <!-- Card 4 (Coming soon placeholder) -->
-        <div class="reveal group bg-white/[0.02] border border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center min-h-64 hover:border-yellow/30 transition-colors" style="transition-delay:0.3s">
-          <div class="w-12 h-12 border-2 border-white/20 rounded-full flex items-center justify-center mb-4 group-hover:border-yellow/50 group-hover:text-yellow transition-colors">
-            <span class="text-xl">+</span>
-          </div>
-          <p class="text-white/30 text-sm group-hover:text-white/50 transition-colors">More projects coming soon</p>
-        </div>
-
+        </article>
       </div>
     </div>
   </section>
-
-  <!-- ─── STATS BAR ──────────────────────────────── -->
-  <div class="border-y border-white/10 py-10 px-6">
-    <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-      <div class="reveal">
-        <div class="font-display text-5xl text-yellow">5+</div>
-        <p class="text-white/40 text-sm mt-1">Years Coding</p>
-      </div>
-      <div class="reveal">
-        <div class="font-display text-5xl text-pink">12+</div>
-        <p class="text-white/40 text-sm mt-1">Projects Built</p>
-      </div>
-      <div class="reveal">
-        <div class="font-display text-5xl text-lime">8+</div>
-        <p class="text-white/40 text-sm mt-1">Happy Clients</p>
-      </div>
-      <div class="reveal">
-        <div class="font-display text-5xl text-cyan">∞</div>
-        <p class="text-white/40 text-sm mt-1">Cups of Coffee</p>
-      </div>
-    </div>
-  </div>
 
   <!-- ─── CONTACT ────────────────────────────────── -->
   <section id="contact" class="relative py-32 px-6 overflow-hidden">
