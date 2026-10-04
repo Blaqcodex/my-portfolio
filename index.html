@@ -22,11 +22,11 @@
             body: ['DM Sans', 'sans-serif'],
           },
           colors: {
-            navy: '#060614',
-            yellow: '#FFE600',
-            pink: '#FF2D78',
-            lime: '#A8FF3E',
-            cyan: '#00D4FF',
+            navy: 'var(--color-background)',
+            yellow: 'var(--color-accent)',
+            pink: 'var(--color-accent)',
+            lime: 'var(--color-accent)',
+            cyan: 'var(--color-accent)',
           },
           animation: {
             'float': 'float 6s ease-in-out infinite',
@@ -53,9 +53,26 @@
   </script>
 
   <style>
+    :root {
+      color-scheme: dark;
+      --color-background: #08090b;
+      --color-surface: #111316;
+      --color-accent: #e3b66b;
+      --color-foreground: #f2f0eb;
+      --color-muted: #a09d96;
+      --color-line: rgb(242 240 235 / 12%);
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --type-display: clamp(5rem, 16vw, 12rem);
+      --type-section: clamp(2.75rem, 7vw, 5.5rem);
+      --content-width: 80rem;
+      --section-space: clamp(6rem, 12vw, 10rem);
+      --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { background-color: #060614; font-family: 'DM Sans', sans-serif; color: white; overflow-x: hidden; }
+    body { background-color: var(--color-background); font-family: var(--font-body); color: var(--color-foreground); overflow-x: hidden; }
 
     /* Noise texture overlay */
     body::before {
@@ -110,7 +127,7 @@
     .skill-badge:hover { background: #FFE600; color: #060614; border-color: #FFE600; }
 
     /* Section label */
-    .section-label { font-family: 'DM Sans', sans-serif; font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: #FFE600; margin-bottom: 1rem; }
+    .section-label { font-family: var(--font-body); font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--color-accent); margin-bottom: 1rem; }
 
     /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
