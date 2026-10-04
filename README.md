@@ -1,46 +1,76 @@
-# Thabiso Nene — Portfolio
+<div align="center">
 
-A static, mobile-first portfolio hosted from the repository root on GitHub Pages at [thabisonene.com](https://thabisonene.com/). The existing HTML, Tailwind CDN, and browser JavaScript setup is retained; there is no package manifest, bundler, or framework build step.
+# THABISO NENE
 
-## Run locally
+### FULL STACK DEVELOPER · FOUNDER · GRAPHIC DESIGNER
 
-Serve the repository root over HTTP so the browser can load the JavaScript module:
+**Durban, South Africa**
+
+[thabisonene.com](https://thabisonene.com/) · [GitHub](https://github.com/Blaqcodex) · [LinkedIn](https://linkedin.com/thabiso-nene)
+
+*Software, entrepreneurship and visual design — brought together with intention.*
+
+</div>
+
+---
+
+## The portfolio
+
+A personal portfolio designed like a title sequence: near-black, warm amber, expressive type, a little grain, and motion that knows when to be still.
+
+The work on display spans full-stack systems, a community farming website, and responsive portfolios and landing pages. The skills section covers software, data, visual design and development workflow. No invented proficiency ratings; just the toolkit.
+
+## A touch of motion
+
+- **Spring-following cursor and magnetic controls** — responsive, restrained, and limited to fine pointers.
+- **Tilted project cards** — a few degrees of movement, then a soft return.
+- **Hero particle field** — gently reacts to the pointer, with particle count and canvas resolution kept in check.
+- **Scroll reveals and subtle parallax** — adds depth to the story without getting in the way.
+
+Every effect respects `prefers-reduced-motion`. Touch devices get a simpler experience, and off-screen animation takes a break.
+
+## Behind the frame
+
+| Path | What lives there |
+| --- | --- |
+| `index.html` | Page content, visual tokens, responsive styling, metadata and accessible fallbacks |
+| `src/effects.js` | Cursor, magnetic controls, card tilt, particles and parallax |
+| `src/lib/physics/spring.js` | Small, reusable spring solver |
+| `img/thabiso.jpg` | Portrait JPEG fallback |
+| `img/thabiso-640.webp`, `img/thabiso-960.webp` | Responsive WebP portrait sources |
+| `CNAME` | Custom domain for GitHub Pages |
+
+### The motion, under the hood
+
+The shared spring uses **190 stiffness** and **25 damping**. Its time step is capped at **1/30 second**, so a paused browser tab cannot turn one frame into a slingshot. Magnetic controls use a softer **150 / 22** spring; card tilt uses **120 / 20** and stays within four degrees.
+
+The canvas tops out at **28 particles** for fine pointers and **12** for coarse pointers, with device-pixel ratio capped at **1.5**. The field pauses off-screen and when the document is hidden. There are no animation packages to install or maintain.
+
+## Run it locally
+
+This is a static site, served from the repository root. No package install or build step is needed. Serve it over HTTP so the browser can load the JavaScript module:
 
 ```sh
 python -m http.server 8000
 ```
 
-Open [http://localhost:8000](http://localhost:8000). Stop the server with `Ctrl+C`.
+Then open [localhost:8000](http://localhost:8000). Stop the server with `Ctrl+C`.
 
-## Structure
+## Make it yours
 
-- `index.html` contains the page content, design tokens, responsive styles, accessibility fallbacks, and non-module form/navigation behavior.
-- `src/effects.js` initializes pointer-only cursor, magnetic-button, and card-tilt effects plus the capped hero canvas field.
-- `src/lib/physics/spring.js` exports the shared spring stepper and its documented frame-safety constants.
-- `img/thabiso.jpg` is the JPEG portrait fallback. `img/thabiso-640.webp` and `img/thabiso-960.webp` are responsive WebP sources.
-- `CNAME` configures the custom GitHub Pages domain.
+- **Skills:** Add to the `TODO` array in `index.html` only after a new skill is confirmed. Don’t guess proficiency or years.
+- **Portrait:** Replace `img/thabiso.jpg` and regenerate its 640px and 960px WebP companions at the same aspect ratio. The page prefers WebP and falls back to JPEG.
+- **Motion:** Keep effects transform/opacity-led, frame-bounded, capped for mobile, and optional for reduced-motion visitors.
 
-The visual system uses a near-black surface, warm amber as its single accent, and decorative grain and vignette overlays.
+## Before publishing
 
-## Motion and physics
-
-The spring solver uses stiffness `190` and damping `25` for a quick, restrained settle. Each frame is capped at `1/30` second so a suspended tab cannot cause a large simulation step. Magnetic elements use a softer stiffness of `150` and damping of `22`; tilt uses `120` and `20`, with rotation limited to four degrees.
-
-The fine-pointer-only cursor, magnetic buttons, and tilt effects update with `requestAnimationFrame`. Small scroll-linked offsets move only the hero's blurred background layers. The hero field caps at 28 particles for fine pointers and 12 for coarse pointers, limits canvas pixel ratio to 1.5, and pauses outside the viewport or while the document is hidden. Physics and parallax are disabled or made immediately readable when `prefers-reduced-motion: reduce` is active. Keep new effects within these constraints.
-
-## Content and portrait updates
-
-Add a skill to the `TODO` array in `index.html` only after it has been confirmed. Do not infer expertise or duration.
-
-Replace `img/thabiso.jpg` with the updated portrait and regenerate the 640px and 960px WebP derivatives at the matching image ratio. The `<picture>` source uses those derivatives when WebP is supported and falls back to the JPEG; the inline fallback remains available if the portrait cannot be loaded.
-
-## Checks
-
-There is no configured build or lint command in this repository. Before publishing, check JavaScript syntax with Node:
+There is no configured build or lint command. Run the available JavaScript syntax checks:
 
 ```sh
 node --check src/effects.js
 node --check src/lib/physics/spring.js
 ```
 
-Also open the page through the local HTTP server, test a narrow and wide viewport, check keyboard navigation and the contact form, and emulate reduced motion in browser developer tools.
+Then preview the site locally at narrow and wide sizes. Check keyboard navigation, the contact form, portrait loading and reduced-motion mode in browser developer tools.
+
+The custom domain is configured via `CNAME`. GitHub Pages deploys from `main`; merge the feature branch into `main` for these changes to appear on the live site.
