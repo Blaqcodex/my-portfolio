@@ -105,8 +105,10 @@
     .marquee-track { display: flex; gap: 2rem; animation: marquee 20s linear infinite; white-space: nowrap; }
     @keyframes marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
 
-    /* Cursor dot */
-    #cursor { width: 14px; height: 14px; background: #FFE600; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: transform 0.1s, background 0.2s; mix-blend-mode: difference; }
+    /* Desktop pointer feedback is opt-in so touch and no-JS users retain the native cursor. */
+    #cursor { position: fixed; left: 0; top: 0; z-index: 9999; width: 10px; height: 10px; border-radius: 50%; background: var(--color-accent); pointer-events: none; opacity: 0; mix-blend-mode: difference; transform: translate3d(var(--cursor-x, -100px), var(--cursor-y, -100px), 0) translate(-50%, -50%) scale(var(--cursor-scale, 1)); }
+    .custom-cursor #cursor { opacity: 1; }
+    [data-magnetic] { translate: var(--magnetic-x, 0) var(--magnetic-y, 0); }
 
     .skip-link { position: fixed; top: 1rem; left: 1rem; z-index: 1000; padding: 0.75rem 1rem; background: var(--color-accent); color: var(--color-background); transform: translateY(-160%); transition: transform 0.2s ease; }
     .skip-link:focus { transform: translateY(0); }
@@ -117,8 +119,8 @@
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
     /* Project card hover */
-    .project-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .project-card:hover { transform: translateY(-8px) rotate(-1deg); }
+    .project-card { transition: transform 0.35s var(--ease-cinematic), box-shadow 0.35s ease; transform-style: preserve-3d; }
+    .project-card.is-tilting.reveal { transform: perspective(900px) translate3d(0, -4px, 0) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)); }
 
     /* Glitch effect on hero name */
     .glitch { position: relative; }
@@ -158,6 +160,7 @@
       .intro-overlay { display: none; }
       .hero-copy { opacity: 1; transform: none; }
     }
+    @media (hover: none), (pointer: coarse) { #cursor { display: none; } }
   </style>
 </head>
 <body>
@@ -214,10 +217,10 @@
       </p>
 
       <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center hero-copy">
-        <a href="#projects" class="bg-yellow text-navy font-bold px-8 py-4 rounded-full text-base hover:scale-105 hover:bg-lime transition-all duration-300 shadow-lg shadow-yellow/20">
+        <a href="#projects" data-magnetic class="bg-yellow text-navy font-bold px-8 py-4 rounded-full text-base hover:scale-105 hover:bg-lime transition-all duration-300 shadow-lg shadow-yellow/20">
           View My Work ↓
         </a>
-        <a href="#contact" class="border border-white/20 text-white px-8 py-4 rounded-full text-base hover:border-pink hover:text-pink transition-all duration-300">
+        <a href="#contact" data-magnetic class="border border-white/20 text-white px-8 py-4 rounded-full text-base hover:border-pink hover:text-pink transition-all duration-300">
           Let's Talk →
         </a>
       </div>
@@ -350,7 +353,7 @@
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 
         <!-- Card 1 -->
-        <div class="project-card reveal group bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden hover:border-yellow/50">
+        <div data-tilt class="project-card reveal group bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden hover:border-yellow/50">
           <div class="h-48 bg-gradient-to-br from-pink/40 to-yellow/20 flex items-center justify-center relative overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-br from-pink to-yellow opacity-20 group-hover:opacity-40 transition-opacity"></div>
             <span class="text-5xl z-10"></span>
@@ -376,7 +379,7 @@
         </div>
 
         <!-- Card 2 -->
-        <div class="project-card reveal group bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden hover:border-pink/50" style="transition-delay:0.1s">
+        <div data-tilt class="project-card reveal group bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden hover:border-pink/50" style="transition-delay:0.1s">
           <div class="h-48 bg-gradient-to-br from-cyan/40 to-lime/20 flex items-center justify-center relative overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-br from-cyan to-lime opacity-20 group-hover:opacity-40 transition-opacity"></div>
             <span class="text-5xl z-10"></span>
@@ -402,7 +405,7 @@
         </div>
 
         <!-- Card 3 -->
-        <div class="project-card reveal group bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden hover:border-lime/50" style="transition-delay:0.2s">
+        <div data-tilt class="project-card reveal group bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden hover:border-lime/50" style="transition-delay:0.2s">
           <div class="h-48 bg-gradient-to-br from-lime/30 to-pink/20 flex items-center justify-center relative overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-br from-lime to-pink opacity-20 group-hover:opacity-40 transition-opacity"></div>
             <span class="text-5xl z-10"></span>
@@ -502,7 +505,7 @@
 
         <!-- Submit -->
         <button type="submit" id="submitBtn"
-          class="w-full bg-yellow text-navy font-bold py-4 rounded-xl text-base hover:bg-lime transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-yellow/20 flex items-center justify-center gap-2">
+          data-magnetic class="w-full bg-yellow text-navy font-bold py-4 rounded-xl text-base hover:bg-lime transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-yellow/20 flex items-center justify-center gap-2">
           <span id="btnText">Send Message </span>
           <span id="btnLoader" class="hidden">Sending...</span>
         </button>
@@ -538,15 +541,6 @@
   <script>
   // ─── Custom Cursor ─────────────────
   const cursor = document.getElementById('cursor');
-  document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top  = e.clientY + 'px';
-  });
-  document.querySelectorAll('a, button').forEach(el => {
-    el.addEventListener('mouseenter', () => { cursor.style.transform = 'translate(-50%,-50%) scale(2.5)'; });
-    el.addEventListener('mouseleave', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1)'; });
-  });
-
   // ─── Mobile Menu ───────────────────
   const menuBtn    = document.getElementById('menuBtn');
   const mobileMenu = document.getElementById('mobileMenu');
@@ -675,5 +669,6 @@
     });
   });
   </script>
+  <script type="module" src="./src/effects.js"></script>
 </body>
 </html>
